@@ -171,5 +171,7 @@ def generate_maps():
 if __name__ == '__main__':
 
     generate_maps()
+
+    plt.savefig('map.png')
     plt.show()
 
