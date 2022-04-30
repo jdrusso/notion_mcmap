@@ -13,6 +13,7 @@ token = open('api_key', 'r').read()
 ignored = ['-']
 
 skipped = ['Source']
+markers_in_legend = ['Nether Portal', 'Village']
 
 def generate_maps():
 
@@ -101,9 +102,10 @@ def generate_maps():
             polygon = [vor.vertices[i] for i in region]
             plt.fill(*zip(*polygon), color=color)
 
-    # Make a legend for the colors
-    legend_elements = [Patch(facecolor=color, label=label) for (label, color) in biome_colors.items()]
-    ax.legend(handles=legend_elements, loc='lower left', fontsize=12)
+    # Make a legend for the biome colors
+    biome_legend_elements = [Patch(facecolor=color, label=label) for (label, color) in biome_colors.items()]
+    biome_legend = ax.legend(handles=biome_legend_elements, loc='lower left', fontsize=12, title='Biomes')
+    ax.add_artist(biome_legend)
 
     scaling = 200
     x_range = np.array([min(locations_array[:-4, 1]) - scaling, scaling + max(locations_array[:-4, 1])])
@@ -117,6 +119,8 @@ def generate_maps():
     texts = []
     offsets = np.random.randint(20, 50, size=(len(locations_array), 2))
     offsets = offsets * np.random.choice([-1, 1], size=offsets.shape)
+    marker_legend_elements = []
+    plotted_names = []
     for i, row in enumerate(locations_array[:-4]):
 
         name = row[0]
@@ -126,8 +130,23 @@ def generate_maps():
         _x = row[1]
         _y = row[3]
 
+        # TODO: Store marker color, other attributes in JSON
         marker = custom_markers.get(name, 'o')
-        ax.scatter(_x, _y, s=100, color='k', marker=marker, zorder=4)
+        marker_color = 'k'
+        marker_size = 100
+        if name == 'Nether Portal':
+            marker_color = 'crimson'
+            marker_size = 150
+        ax.scatter(_x, _y, s=marker_size, color=marker_color, marker=marker, zorder=4)
+
+        # TODO: Clean up logic for de-duplicating
+        if name in markers_in_legend:
+            if name not in plotted_names:
+                marker_legend_elements.append(
+                    ax.scatter(np.nan, np.nan, marker=marker, color=marker_color, label=name)
+                )
+                plotted_names.append(name)
+            continue
 
         texts.append(
             ax.text(_x, _y, name,
@@ -135,6 +154,13 @@ def generate_maps():
                     fontweight='bold',
                     bbox={'boxstyle': 'round', 'fc': 'white', 'ec': 'white', 'alpha': 0.3})
         )
+
+    # Make a legend for the marker symbols
+    # marker_legend_elements = [ax.scatter(np.nan, np.nan, marker=marker, label=label) for (label, marker) in custom_markers.items()
+    #                           if label in markers_in_legend]
+    marker_legend = ax.legend(handles=marker_legend_elements, loc='upper right', fontsize=12, title="Sites")
+
+    ax.add_artist(marker_legend)
 
     adjust_text(texts,
                 x=locations_array[:, 1],
