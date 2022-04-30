@@ -1,4 +1,5 @@
 import requests
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import Voronoi, voronoi_plot_2d
@@ -8,34 +9,17 @@ from adjustText import adjust_text
 
 token = open('api_key', 'r').read()
 
-biome_colors = {
-    "Desert": 'gold',
-    "Forest": "darkgreen",
-    "Plains": "olivedrab",
-    "Mountain": 'silver',
-    "Swamp": 'green',
-    "Jungle": 'chartreuse',
-    "Badlands": 'orange',
-    "Cave": 'dimgray',
-    "Lush Cave": 'mediumspringgreen',
-    "Mushroom": 'darkviolet',
-}
-custom_markers = {
-    "Nether Portal": 'X',
-    "Home": '*',
-    "Ben + Michelle": '*',
-    'Village': '^',
-    'Ocelets': 'P',
-    'Donkeys': 'P',
-    'Watchtower': 's'
-}
-
 # Just a biome marker, no region of interest
 ignored = ['-']
 
 skipped = ['Source']
 
 def generate_maps():
+
+    _json_defs = json.load(open('definitions.json', 'r'))
+    biome_colors = _json_defs['biome_colors']
+    custom_markers = _json_defs['custom_markers']
+
     database_id = '8950d22ace384c5a8f0f4001c1244d88'
 
     url = f"https://api.notion.com/v1/databases/{database_id}/query"
@@ -164,6 +148,7 @@ def generate_maps():
     fig.patch.set_facecolor('white')
     ax.patch.set_facecolor('white')
     plt.tight_layout()
+    plt.savefig('map.png')
 
     return fig, ax
 
@@ -172,6 +157,5 @@ if __name__ == '__main__':
 
     generate_maps()
 
-    plt.savefig('map.png')
     plt.show()
 

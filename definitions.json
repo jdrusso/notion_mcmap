@@ -1,0 +1,25 @@
+{
+  "biome_colors": {
+    "Desert": "gold",
+    "Forest": "darkgreen",
+    "Plains": "olivedrab",
+    "Mountain": "silver",
+    "Swamp": "green",
+    "Jungle": "chartreuse",
+    "Badlands": "orange",
+    "Cave": "dimgray",
+    "Lush Cave": "mediumspringgreen",
+    "Mushroom": "darkviolet",
+    "Ice": "cornflowerblue",
+    "Snow": "lightskyblue"
+  },
+  "custom_markers":{
+    "Nether Portal": "X",
+    "Home": "*",
+    "Ben + Michelle": "*",
+    "Village": "^",
+    "Ocelets": "P",
+    "Donkeys": "P",
+    "Watchtower": "s"
+  }
+}
